@@ -1,4 +1,4 @@
-# Sistem Pengelolaan Keuangan Pribadi
+# Sistem Manajemen Keuangan 
 
 Program ini merupakan aplikasi sederhana berbasis Python untuk mengelola data pengguna, dompet, dan transaksi keuangan pribadi. Program dibuat menggunakan pendekatan Object-Oriented Programming (OOP) dan menerapkan materi Class & Object, Atribut & Method, serta Encapsulation & Property.
 
