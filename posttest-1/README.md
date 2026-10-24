@@ -1,760 +1,248 @@
-# Posttest 1 - Sistem Manajemen Keuangan
+# Posttest 3 
 
-Posttest 1 merupakan program sederhana berbasis Python dengan tema **Sistem Manajemen Keuangan**.
+## Deskripsi Program
 
-Program dibuat menggunakan pendekatan Object-Oriented Programming (OOP) dengan menerapkan materi:
+Sistem Manajemen Keuangan merupakan aplikasi berbasis Python yang digunakan untuk mengelola dompet digital, mencatat pemasukan dan pengeluaran, serta menampilkan saldo dan riwayat transaksi.
 
-- Class & Object
-- Class Attribute
-- Instance Attribute
-- Public Attribute
-- Private Attribute
-- Instance Method
-- Class Method
-- Static Method
-- Encapsulation
-- Property
-- Getter dan Setter
-- Validasi Data
+Program ini dikembangkan menggunakan konsep **Object-Oriented Programming (OOP)**, dengan fokus pada penerapan **abstraksi, polimorfisme, relasi antarkelas, dan operator overloading**. Program juga menerapkan salah satu prinsip SOLID, yaitu **Open/Closed Principle (OCP)**.
 
-Program tidak menggunakan database sehingga seluruh objek dan data hanya digunakan selama program dijalankan.
+## 1. Struktur Program
 
----
+Program terdiri dari beberapa file utama:
 
-# Struktur File
+| File | Fungsi |
+|---|---|
+| `user.py` | Mengelola data pengguna dan hubungan pengguna dengan dompet. |
+| `dompet.py` | Mengelola saldo, pencatatan transaksi, dan riwayat transaksi. |
+| `transaksi.py` | Mendefinisikan abstract class `Transaksi` beserta subclass `Pemasukan` dan `Pengeluaran`. |
+| `laporan.py` | Menampilkan laporan saldo dan riwayat transaksi menggunakan konsep duck typing. |
+| `main.py` | Menjalankan program dan menghubungkan seluruh class. |
 
-```text
-posttest-1/
-├── main.py
-├── user.py
-├── dompet.py
-├── transaksi.py
-└── README.md
-```
+## 2. Class Diagram dan Relasi UML
 
-Keterangan:
+Class Diagram digunakan untuk menggambarkan struktur kelas dan hubungan antarkelas dalam program Sistem Manajemen Keuangan.
 
-- `main.py` digunakan untuk menjalankan dan menguji program.
-- `user.py` berisi class `User`.
-- `dompet.py` berisi class `Dompet`.
-- `transaksi.py` berisi class `Transaksi`.
-- `README.md` berisi dokumentasi Posttest 1.
+**Diagram UML:**
 
----
+![Class Diagram Sistem Manajemen Keuangan](assets/lastPbo.png)
 
-# Class yang Digunakan
+### 2.1 Asosiasi (Association)
 
-Program memiliki tiga class utama:
+**Relasi: `LaporanSaldo` — `Dompet` dan `LaporanRiwayat` — `Dompet`**
 
-```text
-User
-Dompet
-Transaksi
-```
+Relasi asosiasi diterapkan karena kedua class laporan menyimpan referensi objek `Dompet` melalui atribut `self.dompet` untuk mengakses informasi keuangan. Class laporan menggunakan data dompet tanpa bertanggung jawab membuat atau mengelola siklus hidup objek tersebut.
 
-Ketiga class tersebut digunakan untuk merepresentasikan pengguna, dompet, dan transaksi pada Sistem Manajemen Keuangan.
+Implementasi terdapat pada constructor `__init__(self, dompet)` di file `laporan.py`.
 
----
+### 2.2 Agregasi (Aggregation)
 
-## 1. Class User
+**Relasi: `User` ◇—— `Dompet`**
 
-Class `User` digunakan untuk menyimpan dan mengelola data pengguna.
+Relasi agregasi diterapkan karena satu `User` dapat memiliki beberapa objek `Dompet` yang dibuat secara terpisah. Objek `Dompet` tetap dapat digunakan secara independen meskipun tidak lagi terdaftar dalam daftar dompet milik `User`.
 
-```python
-class User:
-```
+Implementasi terdapat pada method `tambah_dompet()` di file `user.py`, yang menyimpan objek dompet ke dalam `self.daftar_dompet`.
 
-### Atribut
+### 2.3 Komposisi (Composition)
 
-Class attribute:
+**Relasi: `Dompet` ◆—— `Transaksi`**
 
-```python
-aplikasi = "Aplikasi Manajemen Keuangan"
-jumlah_user = 0
-```
+Relasi komposisi digunakan untuk memodelkan transaksi sebagai bagian dari catatan keuangan suatu dompet. Dalam desain program, `Dompet` bertanggung jawab membuat, memvalidasi, dan mencatat transaksi melalui method `tambah_transaksi()`.
 
-Instance attribute:
+Implementasinya terdapat pada `dompet.py`, yaitu pembuatan objek menggunakan `kelas_transaksi(...)` dan penyimpanannya melalui `self.__daftar_transaksi.append(transaksi)`.
 
-```python
-self.nama
-self.email
-self.__password
-```
+Hubungan ini merupakan komposisi berdasarkan tanggung jawab kepemilikan dalam desain aplikasi, bukan karena Python secara otomatis menghapus semua referensi objek transaksi ketika dompet dihapus.
 
-`nama` dan `email` merupakan public attribute, sedangkan:
+## 3. Penerapan Abstraksi (Abstract Base Class)
 
-```python
-self.__password
-```
+Abstraksi diterapkan pada file `transaksi.py` dengan menggunakan modul `abc` dari Python.
 
-merupakan private attribute yang digunakan untuk menyimpan password pengguna.
+Class `Transaksi` didefinisikan sebagai abstract class menggunakan `ABC`. Class ini berfungsi sebagai dasar bagi berbagai jenis transaksi dan menetapkan method yang wajib dimiliki setiap subclass.
 
-### Instance Method
+### 3.1 Abstract Method
 
-Method:
+Class `Transaksi` memiliki dua abstract method:
 
-```python
-profile()
-```
+1. `perubahan_saldo()` — menentukan nilai perubahan saldo berdasarkan jenis transaksi.
+2. `tampilkan()` — menampilkan informasi transaksi.
 
-digunakan untuk menampilkan nama dan email pengguna dalam bentuk tabel.
+Kedua method ditandai dengan dekorator `@abstractmethod`, sehingga setiap subclass konkret wajib menyediakan implementasinya.
 
-### Class Method
+### 3.2 Implementasi pada Subclass
 
-Method:
+Terdapat dua subclass yang mewarisi `Transaksi`:
 
-```python
-@classmethod
-def total_user(cls):
-```
+**Class `Pemasukan`**
 
-digunakan untuk mengetahui jumlah objek `User` yang telah dibuat.
+- Menggunakan `super().__init__()` untuk memanggil constructor class induk.
+- Memiliki atribut khusus `sumber`.
+- Method `perubahan_saldo()` mengembalikan nilai positif sehingga saldo bertambah.
+- Method `tampilkan()` menampilkan informasi pemasukan beserta sumbernya.
 
-### Static Method
+**Class `Pengeluaran`**
 
-Method:
+- Menggunakan `super().__init__()` untuk memanggil constructor class induk.
+- Memiliki atribut khusus `metode_pembayaran`.
+- Method `perubahan_saldo()` mengembalikan nilai negatif sehingga saldo berkurang.
+- Method `tampilkan()` menampilkan informasi pengeluaran beserta metode pembayarannya.
 
-```python
-@staticmethod
-def validasi_email(email):
-```
+Dengan demikian, kedua subclass mengimplementasikan seluruh abstract method yang diwajibkan class induk.
 
-digunakan untuk melakukan validasi sederhana terhadap alamat email.
+### 3.3 Method Konkret
 
-Email dianggap valid apabila memiliki karakter:
+Selain abstract method, class `Transaksi` memiliki method konkret `ringkasan()`.
 
-```text
-@
-```
+Method ini digunakan bersama oleh `Pemasukan` dan `Pengeluaran` untuk menghasilkan ringkasan informasi transaksi, seperti ID, kategori, tipe, dan perubahan saldo.
 
-### Property dan Setter
+Method `ringkasan()` memanggil `self.perubahan_saldo()`, sehingga hasilnya menyesuaikan implementasi pada setiap subclass tanpa perlu menulis ulang method ringkasan.
 
-Atribut private `__password` diakses melalui property:
 
-```python
-@property
-def password(self):
-    return self.__password
-```
+## 4. Penerapan Polimorfisme
 
-Perubahan password dilakukan melalui setter:
+Polimorfisme memungkinkan objek yang berbeda merespons pemanggilan method yang sama dengan perilaku yang berbeda.
 
-```python
-@password.setter
-def password(self, value):
-    if len(value) < 6:
-        raise ValueError("Password terlalu mudah")
+Program menerapkan polimorfisme melalui pewarisan dan duck typing.
 
-    self.__password = value
-```
+### 4.1 Polimorfisme melalui Pewarisan (Method Overriding)
 
-Password harus memiliki minimal 6 karakter.
+**Lokasi:** `transaksi.py` dan `main.py`
 
----
+Polimorfisme melalui inheritance diterapkan pada subclass `Pemasukan` dan `Pengeluaran` yang melakukan overriding terhadap method `perubahan_saldo()` dan `tampilkan()`.
 
-## 2. Class Dompet
+Method `perubahan_saldo()` memiliki perilaku berbeda:
 
-Class `Dompet` digunakan untuk menyimpan informasi dompet dan saldo pengguna.
+- `Pemasukan` mengembalikan jumlah transaksi sebagai nilai positif.
+- `Pengeluaran` mengembalikan jumlah transaksi sebagai nilai negatif.
 
-```python
-class Dompet:
-```
+Pada `main.py`, objek dari kedua subclass disimpan dalam daftar transaksi dan dipanggil menggunakan satu perulangan:
 
-### Atribut
+`for transaksi in d1.daftar_transaksi:`
 
-Class attribute:
+Di dalam perulangan tersebut, program menjalankan `transaksi.tampilkan()` dan `transaksi.ringkasan()`.
 
-```python
-total_dompet = 0
-mata_uang = "Rupiah"
-aplikasi = "Aplikasi Manajemen Keuangan"
-```
+Python akan menjalankan implementasi method berdasarkan objek yang sedang diproses. Dengan demikian, program tidak memerlukan pemeriksaan jenis transaksi menggunakan `type()` maupun rantai `if/elif`.
 
-Instance attribute:
+### 4.2 Duck Typing
 
-```python
-self.nama
-self.__saldo
-```
+**Lokasi:** `laporan.py` dan `main.py`
 
-`nama` merupakan public attribute, sedangkan:
+Duck typing diterapkan menggunakan dua class yang tidak memiliki hubungan pewarisan, yaitu:
 
-```python
-self.__saldo
-```
+- `LaporanSaldo`
+- `LaporanRiwayat`
 
-merupakan private attribute.
+Kedua class memiliki method dengan nama yang sama, yaitu `cetak()`, tetapi menghasilkan keluaran yang berbeda.
 
-### Instance Method
+`LaporanSaldo.cetak()` menampilkan tabel nama dompet dan saldo, sedangkan `LaporanRiwayat.cetak()` menampilkan tabel riwayat transaksi.
 
-Method:
+Kedua objek diproses menggunakan fungsi yang sama, yaitu `cetak_laporan(laporan)`, yang hanya memanggil `laporan.cetak()`.
 
-```python
-cek_saldo()
-```
+Pada `main.py`, fungsi tersebut digunakan dalam satu perulangan yang berisi objek `LaporanSaldo` dan `LaporanRiwayat`.
 
-digunakan untuk menampilkan nama dompet dan saldo dalam bentuk tabel.
+Konsep ini menunjukkan bahwa Python dapat memanggil method berdasarkan kemampuan objek tanpa mengharuskan objek berasal dari class induk yang sama.
 
-### Class Method
+### 4.3 Operator Overloading
 
-Method:
+**Lokasi:** `dompet.py`
 
-```python
-@classmethod
-def jumlah_dompet(cls):
-```
+Operator overloading diterapkan melalui magic method `__str__()` pada class `Dompet`.
 
-digunakan untuk mengetahui jumlah objek `Dompet` yang telah dibuat.
+Method `__str__()` digunakan untuk mengatur representasi string suatu objek saat dipanggil menggunakan `str()` atau `print()`.
 
-### Static Method
+Sebagai contoh, objek dompet dapat ditampilkan dengan format:
 
-Method:
+`Dompet 'Dompet Utama' (saldo: Rp3,475,000)`
 
-```python
-@staticmethod
-def format_uang(nilai):
-```
+Dengan demikian, informasi objek lebih mudah dibaca dibandingkan representasi objek bawaan Python.
 
-digunakan sebagai fungsi bantuan untuk memberikan format Rupiah.
+## 5. Penerapan Enkapsulasi dan Inheritance
 
-Contoh:
+Program tetap mempertahankan konsep inheritance dan enkapsulasi yang telah diterapkan pada posttest sebelumnya.
 
-```python
-Dompet.format_uang(500000)
-```
+### 5.1 Inheritance
 
-menghasilkan:
+Class `Pemasukan` dan `Pengeluaran` mewarisi atribut dan method dari `Transaksi`.
 
-```text
-Rp500000
-```
+Kedua subclass menggunakan `super().__init__(...)` untuk melakukan inisialisasi atribut dari class induk, serta menambahkan atribut unik sesuai kebutuhan masing-masing transaksi.
 
-### Property dan Setter
+### 5.2 Protected dan Private Attribute
 
-Saldo diakses melalui property:
+Contoh penerapan atribut protected dan private meliputi:
 
-```python
-@property
-def saldo(self):
-    return self.__saldo
-```
+- `Transaksi._jumlah` = atribut protected untuk menyimpan nominal transaksi.
+- `Transaksi.__id_transaksi` = atribut private untuk menyimpan ID transaksi.
+- `Dompet.__saldo` = atribut private untuk menyimpan saldo.
+- `Dompet.__daftar_transaksi` = atribut private untuk menyimpan riwayat transaksi.
+- `User.__password` = atribut private untuk menyimpan data password pada simulasi OOP.
 
-Sedangkan perubahan saldo dilakukan melalui:
+Akses terhadap beberapa atribut tersebut dikendalikan menggunakan `@property` dan setter.
 
-```python
-@saldo.setter
-def saldo(self, value):
-    if value < 0:
-        raise ValueError("Saldo tidak boleh negatif")
+Sebagai contoh, setter `jumlah` menolak nominal transaksi yang tidak lebih besar dari nol, sedangkan setter `saldo` menolak nilai saldo negatif.
 
-    self.__saldo = value
-```
+## 6. Penerapan Prinsip SOLID (Nilai Tambahan)
 
-Saldo tidak diperbolehkan memiliki nilai negatif.
+### Open/Closed Principle (OCP)
 
----
+**Lokasi:** `dompet.py`, pada method `tambah_transaksi()`.
 
-## 3. Class Transaksi
+Open/Closed Principle menyatakan bahwa komponen perangkat lunak sebaiknya terbuka untuk pengembangan, tetapi tidak memerlukan perubahan pada logika yang sudah ada ketika fitur baru ditambahkan.
 
-Class `Transaksi` digunakan untuk menyimpan data transaksi keuangan.
+Pada program ini, method `tambah_transaksi()` menerima class transaksi melalui parameter `kelas_transaksi`.
 
-```python
-class Transaksi:
-```
+Setelah objek dibuat, method memanggil `transaksi.perubahan_saldo()` untuk menentukan perubahan saldo tanpa memeriksa apakah transaksi tersebut termasuk pemasukan atau pengeluaran.
 
-### Atribut
+Sebagai contoh pengembangan, dapat ditambahkan subclass baru bernama `Cashback` yang mewarisi `Transaksi` dan mengimplementasikan seluruh abstract method.
 
-Class attribute:
+Objek `Cashback` dapat diproses melalui `tambah_transaksi()` tanpa perlu mengubah logika utama pencatatan pada class `Dompet`, selama constructor dan perilakunya mengikuti kontrak yang digunakan method tersebut.
 
-```python
-jumlah_data = 0
-nama_aplikasi = "Aplikasi Manajemen Keuangan"
-kategori_default = "Umum"
-```
+Dengan demikian, penerapan OCP memungkinkan pengembangan jenis transaksi baru secara lebih fleksibel dan mengurangi kebutuhan modifikasi pada kode yang telah ada.
 
-Instance attribute:
+## 7. Hasil Eksekusi Program
 
-```python
-self.kategori
-self.tipe
-self.__jumlah
-```
+Program dijalankan melalui file `main.py`, yang menghubungkan objek pengguna, dompet, transaksi, serta laporan keuangan.
 
-`kategori` dan `tipe` merupakan public attribute.
+Output utama menampilkan profil pengguna dan saldo, informasi pemasukan serta pengeluaran, dan laporan keuangan dalam bentuk tabel.
 
-Sedangkan:
+**Screenshot output program:**
 
-```python
-self.__jumlah
-```
+### a. Profil dan Saldo
 
-merupakan private attribute yang digunakan untuk menyimpan nominal transaksi.
+![Profil dan Saldo](assets/profildansaldo.png)
 
-### Instance Method
+### b. Riwayat Transaksi
 
-Method:
+![Riwayat Transaksi](assets/riwayat_transaksi.png)
 
-```python
-tampilkan()
-```
+### c. Detail Pengeluaran
 
-digunakan untuk menampilkan kategori, tipe, dan jumlah transaksi dalam bentuk tabel.
+![Detail Pengeluaran](assets/asosiasi.png)
 
-### Class Method
+### d. Laporan Keuangan (Duck Typing)
 
-Method:
+![Laporan Keuangan](assets/duck_typing.png)
 
-```python
-@classmethod
-def total_transaksi(cls):
-```
+### Bukti Pengujian Abstraksi
 
-digunakan untuk mengetahui jumlah objek transaksi yang telah dibuat.
+Hasil `TypeError` membuktikan bahwa class `Transaksi` tidak dapat diinstansiasi secara langsung.
 
-### Static Method
+Output Bukti Abstraksi: 
 
-Method:
+## 8. Cara Menjalankan Program
 
-```python
-@staticmethod
-def cek_tipe(tipe):
-```
+Pastikan Python dan library `tabulate` sudah terpasang.
 
-digunakan untuk mengecek apakah tipe transaksi merupakan:
+Instal library yang dibutuhkan:
 
-```text
-Pemasukan
-```
+`pip install tabulate`
 
-atau:
+Jalankan program utama:
 
-```text
-Pengeluaran
-```
+`python main.py`
 
-### Property dan Setter
 
-Jumlah transaksi diakses melalui property:
+## 9. Kesimpulan
 
-```python
-@property
-def jumlah(self):
-    return self.__jumlah
-```
+Program Sistem Manajemen Keuangan telah mengintegrasikan konsep abstraksi dan polimorfisme untuk memisahkan tanggung jawab antarkelas dan mengurangi ketergantungan terhadap pemeriksaan jenis objek.
 
-Sedangkan perubahan jumlah transaksi dilakukan melalui setter:
+Abstraksi diterapkan pada class `Transaksi`, polimorfisme melalui overriding diterapkan pada `Pemasukan` dan `Pengeluaran`, duck typing diterapkan pada class laporan, serta operator overloading diterapkan melalui `Dompet.__str__()`.
 
-```python
-@jumlah.setter
-def jumlah(self, nilai):
-    if nilai <= 0:
-        raise ValueError("Jumlah harus lebih dari 0.")
-
-    self.__jumlah = nilai
-```
-
-Jumlah transaksi harus lebih dari `0`.
-
----
-
-# Konsep OOP yang Diterapkan
-
-## Class dan Object
-
-Program memiliki tiga class:
-
-```text
-User
-Dompet
-Transaksi
-```
-
-Pada `main.py`, dibuat dua objek dari setiap class.
-
-Objek User:
-
-```python
-u1 = User("Hikaru", "hikaru@gmail.com")
-u2 = User("Yui", "yui@gmail.com")
-```
-
-Objek Dompet:
-
-```python
-d1 = Dompet("Dompet Utama", 500000)
-d2 = Dompet("Tabungan", 1000000)
-```
-
-Objek Transaksi:
-
-```python
-t1 = Transaksi("Makan", 25000, "Pengeluaran")
-t2 = Transaksi("Gaji", 3000000, "Pemasukan")
-```
-
----
-
-## Class Attribute
-
-Class attribute merupakan atribut yang dimiliki oleh class dan digunakan bersama oleh seluruh objek.
-
-Contoh pada class `Dompet`:
-
-```python
-total_dompet = 0
-mata_uang = "Rupiah"
-aplikasi = "Aplikasi Manajemen Keuangan"
-```
-
-Contoh pada class `Transaksi`:
-
-```python
-jumlah_data = 0
-nama_aplikasi = "Aplikasi Manajemen Keuangan"
-kategori_default = "Umum"
-```
-
----
-
-## Instance Attribute
-
-Instance attribute merupakan atribut yang dimiliki oleh masing-masing objek dan dibuat melalui constructor `__init__()`.
-
-Contoh:
-
-```python
-def __init__(self, nama, saldo):
-    self.nama = nama
-    self.saldo = saldo
-```
-
-Nilai instance attribute dapat berbeda pada setiap objek.
-
----
-
-## Public Attribute
-
-Public attribute dapat diakses secara langsung dari luar class.
-
-Contoh:
-
-```python
-self.nama
-self.email
-self.kategori
-self.tipe
-```
-
----
-
-## Private Attribute
-
-Private attribute digunakan untuk membatasi akses langsung terhadap data tertentu.
-
-Program menggunakan:
-
-```python
-User.__password
-Dompet.__saldo
-Transaksi.__jumlah
-```
-
-Atribut tersebut tidak diubah secara langsung dari luar class, melainkan melalui property dan setter.
-
----
-
-# Encapsulation dan Property
-
-Encapsulation diterapkan dengan menggunakan private attribute dan property.
-
-Contohnya pada class `Dompet`:
-
-```python
-@property
-def saldo(self):
-    return self.__saldo
-```
-
-Setter digunakan untuk melakukan perubahan sekaligus validasi:
-
-```python
-@saldo.setter
-def saldo(self, value):
-    if value < 0:
-        raise ValueError("Saldo tidak boleh negatif")
-
-    self.__saldo = value
-```
-
-Konsep yang sama diterapkan pada:
-
-```text
-User.password
-Dompet.saldo
-Transaksi.jumlah
-```
-
----
-
-# Instance Method
-
-Instance method merupakan method yang menggunakan parameter `self` dan bekerja terhadap data objek.
-
-Contoh penggunaannya:
-
-```python
-u1.profile()
-d1.cek_saldo()
-t1.tampilkan()
-```
-
----
-
-# Class Method
-
-Class method menggunakan decorator:
-
-```python
-@classmethod
-```
-
-dan menerima parameter `cls`.
-
-Program menggunakan:
-
-```python
-User.total_user()
-Dompet.jumlah_dompet()
-Transaksi.total_transaksi()
-```
-
-Method tersebut digunakan untuk mengetahui jumlah objek yang telah dibuat.
-
----
-
-# Static Method
-
-Static method menggunakan decorator:
-
-```python
-@staticmethod
-```
-
-dan tidak membutuhkan parameter `self` maupun `cls`.
-
-Program menggunakan:
-
-```python
-User.validasi_email("hikaru@gmail.com")
-Dompet.format_uang(500000)
-Transaksi.cek_tipe("Pemasukan")
-```
-
----
-
-# Validasi Data
-
-Program menerapkan validasi menggunakan setter.
-
-## Validasi Password
-
-Password harus memiliki minimal 6 karakter.
-
-Data valid:
-
-```python
-u1.password = "password123"
-```
-
-Data tidak valid:
-
-```python
-u2.password = "123"
-```
-
-Program menghasilkan:
-
-```text
-Password terlalu mudah
-```
-
----
-
-## Validasi Saldo
-
-Saldo tidak boleh bernilai negatif.
-
-Data valid:
-
-```python
-d1.saldo = 750000
-```
-
-Data tidak valid:
-
-```python
-d2.saldo = -100000
-```
-
-Program menghasilkan:
-
-```text
-Saldo tidak boleh negatif
-```
-
----
-
-## Validasi Jumlah Transaksi
-
-Jumlah transaksi harus lebih dari `0`.
-
-Data valid:
-
-```python
-t1.jumlah = 50000
-```
-
-Data tidak valid:
-
-```python
-t2.jumlah = 0
-```
-
-Program menghasilkan:
-
-```text
-Jumlah harus lebih dari 0.
-```
-
-Pengujian data tidak valid menggunakan `try-except` agar program tetap dapat menjalankan pengujian berikutnya setelah terjadi `ValueError`.
-
----
-
-# Pengujian Program
-
-Seluruh pengujian dilakukan pada file:
-
-```text
-main.py
-```
-
-Pengujian meliputi:
-
-```text
-1. Membuat dua objek User
-2. Membuat dua objek Dompet
-3. Membuat dua objek Transaksi
-4. Menjalankan instance method
-5. Menjalankan class method
-6. Menjalankan static method
-7. Menguji setter dengan data valid
-8. Menguji setter dengan data tidak valid
-```
-
-Contoh pemanggilan instance method:
-
-```python
-u1.profile()
-d1.cek_saldo()
-t1.tampilkan()
-```
-
-Pengujian class method:
-
-```python
-print("Total user:", User.total_user())
-print("Total dompet:", Dompet.jumlah_dompet())
-print("Total transaksi:", Transaksi.total_transaksi())
-```
-
-Pengujian static method:
-
-```python
-User.validasi_email("hikaru@gmail.com")
-Dompet.format_uang(500000)
-Transaksi.cek_tipe("Pemasukan")
-```
-
----
-
-# Library yang Digunakan
-
-Program menggunakan library:
-
-```text
-tabulate
-```
-
-Library tersebut digunakan untuk menampilkan informasi dalam bentuk tabel.
-
-Install menggunakan:
-
-```bash
-pip install tabulate
-```
-
----
-
-# Cara Menjalankan Program
-
-Masuk ke folder Posttest 1:
-
-```bash
-cd posttest-1
-```
-
-Install library apabila belum tersedia:
-
-```bash
-pip install tabulate
-```
-
-Kemudian jalankan:
-
-```bash
-python3 -m main
-```
-
-atau:
-
-```bash
-python3 main.py
-```
-
----
-
-# Kesimpulan
-
-Posttest 1 Sistem Manajemen Keuangan telah menerapkan materi dari tiga modul OOP, yaitu:
-
-```text
-Modul 1 : Class & Object
-Modul 2 : Atribut & Method
-Modul 3 : Encapsulation & Property
-```
-
-Program memiliki tiga class utama:
-
-```text
-User
-Dompet
-Transaksi
-```
-
-Program juga telah menerapkan:
-
-```text
-Class Attribute
-Instance Attribute
-Public Attribute
-Private Attribute
-Instance Method
-Class Method
-Static Method
-Property
-Getter
-Setter
-Validasi Data
-```
-
-Pada `main.py`, dibuat minimal dua objek dari setiap class serta dilakukan pengujian terhadap instance method, class method, static method, setter dengan data valid, dan setter dengan data tidak valid.
+Hubungan antarkelas juga dimodelkan menggunakan asosiasi, agregasi, dan komposisi. Selain itu, prinsip Open/Closed Principle diterapkan untuk mendukung pengembangan jenis transaksi baru tanpa mengubah logika utama pencatatan dompet.
