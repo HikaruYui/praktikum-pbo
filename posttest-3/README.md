@@ -1,10 +1,10 @@
-# Posttest 3 
+# Posttest 3 — Sistem Manajemen Keuangan
 
 ## Deskripsi Program
 
 Sistem Manajemen Keuangan merupakan aplikasi berbasis Python yang digunakan untuk mengelola dompet digital, mencatat pemasukan dan pengeluaran, serta menampilkan saldo dan riwayat transaksi.
 
-Program ini dikembangkan menggunakan konsep **Object-Oriented Programming (OOP)**, dengan fokus pada penerapan **abstraksi, polimorfisme, relasi antarkelas, dan operator overloading**. Program juga menerapkan salah satu prinsip SOLID, yaitu **Open/Closed Principle (OCP)**.
+Program ini dikembangkan menggunakan konsep **Object-Oriented Programming (OOP)**, dengan fokus pada penerapan **abstraksi, polimorfisme, dan relasi antarkelas**. Program juga menerapkan enkapsulasi, inheritance, operator overloading, serta salah satu prinsip SOLID, yaitu **Open/Closed Principle (OCP)**.
 
 ## 1. Struktur Program
 
@@ -15,14 +15,12 @@ Program terdiri dari beberapa file utama:
 | `user.py` | Mengelola data pengguna dan hubungan pengguna dengan dompet. |
 | `dompet.py` | Mengelola saldo, pencatatan transaksi, dan riwayat transaksi. |
 | `transaksi.py` | Mendefinisikan abstract class `Transaksi` beserta subclass `Pemasukan` dan `Pengeluaran`. |
-| `laporan.py` | Menampilkan laporan saldo dan riwayat transaksi menggunakan konsep duck typing. |
+| `laporan.py` | Menampilkan laporan saldo dan riwayat transaksi menggunakan duck typing. |
 | `main.py` | Menjalankan program dan menghubungkan seluruh class. |
 
 ## 2. Class Diagram dan Relasi UML
 
-Class Diagram digunakan untuk menggambarkan struktur kelas dan hubungan antarkelas dalam program Sistem Manajemen Keuangan.
-
-**Diagram UML:**
+Class Diagram menggambarkan struktur kelas beserta hubungan antarkelas dalam program Sistem Manajemen Keuangan.
 
 ![Class Diagram Sistem Manajemen Keuangan](assets/lastPbo.png)
 
@@ -30,219 +28,239 @@ Class Diagram digunakan untuk menggambarkan struktur kelas dan hubungan antarkel
 
 **Relasi: `LaporanSaldo` — `Dompet` dan `LaporanRiwayat` — `Dompet`**
 
-Relasi asosiasi diterapkan karena kedua class laporan menyimpan referensi objek `Dompet` melalui atribut `self.dompet` untuk mengakses informasi keuangan. Class laporan menggunakan data dompet tanpa bertanggung jawab membuat atau mengelola siklus hidup objek tersebut.
+Relasi asosiasi diterapkan karena kedua class laporan menggunakan objek `Dompet` untuk mengakses informasi keuangan melalui atribut `self.dompet`. Kedua class laporan tidak bertanggung jawab membuat maupun mengelola siklus hidup objek dompet.
 
-Implementasi terdapat pada constructor `__init__(self, dompet)` di file `laporan.py`.
+Implementasinya terdapat pada constructor `__init__(self, dompet)` di file `laporan.py`.
 
 ### 2.2 Agregasi (Aggregation)
 
 **Relasi: `User` ◇—— `Dompet`**
 
-Relasi agregasi diterapkan karena satu `User` dapat memiliki beberapa objek `Dompet` yang dibuat secara terpisah. Objek `Dompet` tetap dapat digunakan secara independen meskipun tidak lagi terdaftar dalam daftar dompet milik `User`.
+Relasi agregasi diterapkan karena satu `User` dapat memiliki beberapa objek `Dompet` yang dibuat secara terpisah. Objek `Dompet` tetap dapat digunakan secara independen meskipun tidak lagi menjadi bagian dari daftar dompet milik `User`.
 
-Implementasi terdapat pada method `tambah_dompet()` di file `user.py`, yang menyimpan objek dompet ke dalam `self.daftar_dompet`.
+Implementasinya terdapat pada method `tambah_dompet()` di file `user.py`, yang menyimpan referensi objek dompet melalui `self.daftar_dompet.append(dompet)`.
 
 ### 2.3 Komposisi (Composition)
 
 **Relasi: `Dompet` ◆—— `Transaksi`**
 
-Relasi komposisi digunakan untuk memodelkan transaksi sebagai bagian dari catatan keuangan suatu dompet. Dalam desain program, `Dompet` bertanggung jawab membuat, memvalidasi, dan mencatat transaksi melalui method `tambah_transaksi()`.
+Relasi komposisi digunakan karena transaksi dicatat sebagai bagian dari pengelolaan keuangan suatu dompet. Class `Dompet` bertanggung jawab membuat, memvalidasi, dan menyimpan transaksi melalui method `tambah_transaksi()`.
 
-Implementasinya terdapat pada `dompet.py`, yaitu pembuatan objek menggunakan `kelas_transaksi(...)` dan penyimpanannya melalui `self.__daftar_transaksi.append(transaksi)`.
+Implementasinya terdapat pada file `dompet.py`, ketika objek dibuat menggunakan `kelas_transaksi(...)` kemudian disimpan melalui `self.__daftar_transaksi.append(transaksi)`.
 
-Hubungan ini merupakan komposisi berdasarkan tanggung jawab kepemilikan dalam desain aplikasi, bukan karena Python secara otomatis menghapus semua referensi objek transaksi ketika dompet dihapus.
+Hubungan ini menggambarkan kepemilikan transaksi dalam desain aplikasi, meskipun Python tetap memungkinkan referensi objek transaksi disimpan di luar dompet.
+
+### 2.4 Inheritance
+
+**Relasi: `Transaksi` — `Pemasukan` dan `Pengeluaran`**
+
+Class `Pemasukan` dan `Pengeluaran` merupakan subclass dari `Transaksi`. Keduanya mewarisi atribut dan method dari class induk, serta memiliki atribut dan implementasi method yang berbeda sesuai jenis transaksi.
 
 ## 3. Penerapan Abstraksi (Abstract Base Class)
 
-Abstraksi diterapkan pada file `transaksi.py` dengan menggunakan modul `abc` dari Python.
+Abstraksi diterapkan pada file `transaksi.py` menggunakan `ABC` dan `abstractmethod` dari modul `abc` Python.
 
-Class `Transaksi` didefinisikan sebagai abstract class menggunakan `ABC`. Class ini berfungsi sebagai dasar bagi berbagai jenis transaksi dan menetapkan method yang wajib dimiliki setiap subclass.
+Class `Transaksi` didefinisikan sebagai abstract class yang menjadi dasar bagi berbagai jenis transaksi.
 
 ### 3.1 Abstract Method
 
 Class `Transaksi` memiliki dua abstract method:
 
-1. `perubahan_saldo()` — menentukan nilai perubahan saldo berdasarkan jenis transaksi.
+1. `perubahan_saldo()` — menentukan perubahan saldo berdasarkan perilaku setiap jenis transaksi.
 2. `tampilkan()` — menampilkan informasi transaksi.
 
-Kedua method ditandai dengan dekorator `@abstractmethod`, sehingga setiap subclass konkret wajib menyediakan implementasinya.
+Kedua method menggunakan dekorator `@abstractmethod`, sehingga subclass konkret wajib mengimplementasikannya sebelum dapat dibuat menjadi objek.
 
-### 3.2 Implementasi pada Subclass
-
-Terdapat dua subclass yang mewarisi `Transaksi`:
+### 3.2 Implementasi Abstract Method pada Subclass
 
 **Class `Pemasukan`**
 
 - Menggunakan `super().__init__()` untuk memanggil constructor class induk.
 - Memiliki atribut khusus `sumber`.
-- Method `perubahan_saldo()` mengembalikan nilai positif sehingga saldo bertambah.
-- Method `tampilkan()` menampilkan informasi pemasukan beserta sumbernya.
+- Mengimplementasikan `perubahan_saldo()` dengan mengembalikan nilai positif.
+- Mengimplementasikan `tampilkan()` untuk menampilkan informasi pemasukan, termasuk sumbernya.
 
 **Class `Pengeluaran`**
 
 - Menggunakan `super().__init__()` untuk memanggil constructor class induk.
 - Memiliki atribut khusus `metode_pembayaran`.
-- Method `perubahan_saldo()` mengembalikan nilai negatif sehingga saldo berkurang.
-- Method `tampilkan()` menampilkan informasi pengeluaran beserta metode pembayarannya.
+- Mengimplementasikan `perubahan_saldo()` dengan mengembalikan nilai negatif.
+- Mengimplementasikan `tampilkan()` untuk menampilkan informasi pengeluaran, termasuk metode pembayarannya.
 
-Dengan demikian, kedua subclass mengimplementasikan seluruh abstract method yang diwajibkan class induk.
+Dengan demikian, kedua subclass memiliki implementasi seluruh abstract method yang diwajibkan oleh `Transaksi`.
 
 ### 3.3 Method Konkret
 
 Selain abstract method, class `Transaksi` memiliki method konkret `ringkasan()`.
 
-Method ini digunakan bersama oleh `Pemasukan` dan `Pengeluaran` untuk menghasilkan ringkasan informasi transaksi, seperti ID, kategori, tipe, dan perubahan saldo.
+Method ini menghasilkan informasi ringkas berupa ID transaksi, jenis transaksi, kategori, dan perubahan saldo.
 
-Method `ringkasan()` memanggil `self.perubahan_saldo()`, sehingga hasilnya menyesuaikan implementasi pada setiap subclass tanpa perlu menulis ulang method ringkasan.
+Method `ringkasan()` dapat digunakan bersama oleh `Pemasukan` dan `Pengeluaran` tanpa perlu di-override karena implementasinya sudah tersedia pada class induk.
 
+Di dalam method tersebut terdapat pemanggilan `self.perubahan_saldo()`, sehingga hasil ringkasan menyesuaikan perilaku subclass masing-masing.
+
+### 3.4 Bukti Abstract Class Tidak Dapat Diinstansiasi
+
+Pengujian abstraksi dilakukan dengan mencoba membuat objek secara langsung dari class `Transaksi` menggunakan `try-except TypeError`.
+
+Python akan menolak instansiasi tersebut karena `Transaksi` masih memiliki abstract method.
+
+**Screenshot Bukti Abstraksi:**
+
+![Bukti Abstract Class](assets/bukti_abstraksi.png)
 
 ## 4. Penerapan Polimorfisme
 
-Polimorfisme memungkinkan objek yang berbeda merespons pemanggilan method yang sama dengan perilaku yang berbeda.
+Polimorfisme memungkinkan objek dari class yang berbeda merespons pemanggilan method yang sama dengan perilaku yang berbeda.
 
-Program menerapkan polimorfisme melalui pewarisan dan duck typing.
+Program menerapkan polimorfisme melalui inheritance dan duck typing.
 
 ### 4.1 Polimorfisme melalui Pewarisan (Method Overriding)
 
-**Lokasi:** `transaksi.py` dan `main.py`
+**Lokasi: `transaksi.py`, `dompet.py`, dan `main.py`**
 
 Polimorfisme melalui inheritance diterapkan pada subclass `Pemasukan` dan `Pengeluaran` yang melakukan overriding terhadap method `perubahan_saldo()` dan `tampilkan()`.
 
-Method `perubahan_saldo()` memiliki perilaku berbeda:
+Method `perubahan_saldo()` memiliki perilaku berbeda pada setiap subclass:
 
-- `Pemasukan` mengembalikan jumlah transaksi sebagai nilai positif.
-- `Pengeluaran` mengembalikan jumlah transaksi sebagai nilai negatif.
+- `Pemasukan` menghasilkan perubahan saldo positif.
+- `Pengeluaran` menghasilkan perubahan saldo negatif.
 
-Pada `main.py`, objek dari kedua subclass disimpan dalam daftar transaksi dan dipanggil menggunakan satu perulangan:
+Pada `main.py`, objek dari kedua subclass diproses melalui satu perulangan yang memanggil `transaksi.perubahan_saldo()`.
 
-`for transaksi in d1.daftar_transaksi:`
-
-Di dalam perulangan tersebut, program menjalankan `transaksi.tampilkan()` dan `transaksi.ringkasan()`.
-
-Python akan menjalankan implementasi method berdasarkan objek yang sedang diproses. Dengan demikian, program tidak memerlukan pemeriksaan jenis transaksi menggunakan `type()` maupun rantai `if/elif`.
+Python menjalankan implementasi method berdasarkan class dari objek yang sedang diproses, sehingga tidak diperlukan pengecekan jenis transaksi menggunakan `type()` maupun rantai `if/elif`.
 
 ### 4.2 Duck Typing
 
-**Lokasi:** `laporan.py` dan `main.py`
+**Lokasi: `laporan.py` dan `main.py`**
 
-Duck typing diterapkan menggunakan dua class yang tidak memiliki hubungan pewarisan, yaitu:
+Duck typing diterapkan menggunakan dua class yang tidak memiliki hubungan pewarisan, yaitu `LaporanSaldo` dan `LaporanRiwayat`.
 
-- `LaporanSaldo`
-- `LaporanRiwayat`
+Kedua class memiliki method dengan nama yang sama, yaitu `cetak()`, tetapi menghasilkan keluaran berbeda:
 
-Kedua class memiliki method dengan nama yang sama, yaitu `cetak()`, tetapi menghasilkan keluaran yang berbeda.
+- `LaporanSaldo.cetak()` menampilkan tabel nama dompet dan saldo.
+- `LaporanRiwayat.cetak()` menampilkan tabel riwayat transaksi.
 
-`LaporanSaldo.cetak()` menampilkan tabel nama dompet dan saldo, sedangkan `LaporanRiwayat.cetak()` menampilkan tabel riwayat transaksi.
+Kedua objek dapat diproses menggunakan fungsi `cetak_laporan(laporan)` yang memanggil `laporan.cetak()` tanpa memeriksa jenis class objek.
 
-Kedua objek diproses menggunakan fungsi yang sama, yaitu `cetak_laporan(laporan)`, yang hanya memanggil `laporan.cetak()`.
+Pada `main.py`, objek `LaporanSaldo` dan `LaporanRiwayat` dipanggil melalui satu perulangan menggunakan fungsi tersebut.
 
-Pada `main.py`, fungsi tersebut digunakan dalam satu perulangan yang berisi objek `LaporanSaldo` dan `LaporanRiwayat`.
-
-Konsep ini menunjukkan bahwa Python dapat memanggil method berdasarkan kemampuan objek tanpa mengharuskan objek berasal dari class induk yang sama.
+Dengan demikian, objek dapat digunakan berdasarkan method yang dimilikinya, tanpa harus memiliki hubungan inheritance.
 
 ### 4.3 Operator Overloading
 
-**Lokasi:** `dompet.py`
+**Lokasi: `dompet.py`**
 
 Operator overloading diterapkan melalui magic method `__str__()` pada class `Dompet`.
 
-Method `__str__()` digunakan untuk mengatur representasi string suatu objek saat dipanggil menggunakan `str()` atau `print()`.
+Method ini menentukan representasi string objek ketika dipanggil menggunakan `str()` atau `print()`.
 
-Sebagai contoh, objek dompet dapat ditampilkan dengan format:
+Contoh representasi objek:
 
 `Dompet 'Dompet Utama' (saldo: Rp3,475,000)`
 
-Dengan demikian, informasi objek lebih mudah dibaca dibandingkan representasi objek bawaan Python.
+Implementasi ini membuat informasi objek dompet lebih mudah dibaca dibandingkan representasi bawaan Python.
 
 ## 5. Penerapan Enkapsulasi dan Inheritance
 
-Program tetap mempertahankan konsep inheritance dan enkapsulasi yang telah diterapkan pada posttest sebelumnya.
+Program mempertahankan konsep enkapsulasi dan inheritance yang telah diterapkan pada posttest sebelumnya.
 
 ### 5.1 Inheritance
 
-Class `Pemasukan` dan `Pengeluaran` mewarisi atribut dan method dari `Transaksi`.
+Class `Pemasukan` dan `Pengeluaran` mewarisi atribut dan method dari class `Transaksi`.
 
-Kedua subclass menggunakan `super().__init__(...)` untuk melakukan inisialisasi atribut dari class induk, serta menambahkan atribut unik sesuai kebutuhan masing-masing transaksi.
+Kedua subclass menggunakan `super().__init__(...)` untuk menginisialisasi atribut dari class induk, serta menambahkan atribut khusus sesuai kebutuhan transaksi masing-masing.
 
 ### 5.2 Protected dan Private Attribute
 
-Contoh penerapan atribut protected dan private meliputi:
+Contoh penerapan protected dan private attribute:
 
-- `Transaksi._jumlah` = atribut protected untuk menyimpan nominal transaksi.
-- `Transaksi.__id_transaksi` = atribut private untuk menyimpan ID transaksi.
-- `Dompet.__saldo` = atribut private untuk menyimpan saldo.
-- `Dompet.__daftar_transaksi` = atribut private untuk menyimpan riwayat transaksi.
-- `User.__password` = atribut private untuk menyimpan data password pada simulasi OOP.
+| Class | Atribut | Akses |
+|---|---|---|
+| `Transaksi` | `_jumlah` | Protected |
+| `Transaksi` | `__id_transaksi` | Private |
+| `Dompet` | `__saldo` | Private |
+| `Dompet` | `__daftar_transaksi` | Private |
+| `User` | `__password` | Private |
 
-Akses terhadap beberapa atribut tersebut dikendalikan menggunakan `@property` dan setter.
+Pengaksesan dan perubahan beberapa atribut dikendalikan melalui `@property` dan setter.
 
-Sebagai contoh, setter `jumlah` menolak nominal transaksi yang tidak lebih besar dari nol, sedangkan setter `saldo` menolak nilai saldo negatif.
+Contohnya, setter `jumlah` menolak nominal transaksi yang tidak lebih besar dari nol, sedangkan setter `saldo` menolak saldo negatif.
 
 ## 6. Penerapan Prinsip SOLID (Nilai Tambahan)
 
 ### Open/Closed Principle (OCP)
 
-**Lokasi:** `dompet.py`, pada method `tambah_transaksi()`.
+**Lokasi: `dompet.py`, method `tambah_transaksi()`**
 
-Open/Closed Principle menyatakan bahwa komponen perangkat lunak sebaiknya terbuka untuk pengembangan, tetapi tidak memerlukan perubahan pada logika yang sudah ada ketika fitur baru ditambahkan.
+Open/Closed Principle menyatakan bahwa komponen program sebaiknya terbuka untuk pengembangan, tetapi tidak memerlukan perubahan terhadap logika yang telah ada setiap kali fitur baru ditambahkan.
 
-Pada program ini, method `tambah_transaksi()` menerima class transaksi melalui parameter `kelas_transaksi`.
+Dalam program ini, method `tambah_transaksi()` menerima class transaksi melalui parameter `kelas_transaksi`.
 
-Setelah objek dibuat, method memanggil `transaksi.perubahan_saldo()` untuk menentukan perubahan saldo tanpa memeriksa apakah transaksi tersebut termasuk pemasukan atau pengeluaran.
+Method tersebut membuat objek transaksi dan memanggil `transaksi.perubahan_saldo()` tanpa melakukan pengecekan apakah objek berasal dari class `Pemasukan` atau `Pengeluaran`.
 
-Sebagai contoh pengembangan, dapat ditambahkan subclass baru bernama `Cashback` yang mewarisi `Transaksi` dan mengimplementasikan seluruh abstract method.
+Sebagai contoh pengembangan, subclass baru seperti `Cashback` dapat ditambahkan dengan mewarisi `Transaksi` dan mengimplementasikan abstract method yang diwajibkan.
 
-Objek `Cashback` dapat diproses melalui `tambah_transaksi()` tanpa perlu mengubah logika utama pencatatan pada class `Dompet`, selama constructor dan perilakunya mengikuti kontrak yang digunakan method tersebut.
+Selama subclass baru mengikuti kontrak dan parameter constructor yang digunakan, objeknya dapat diproses melalui `tambah_transaksi()` tanpa mengubah logika utama pencatatan transaksi pada class `Dompet`.
 
-Dengan demikian, penerapan OCP memungkinkan pengembangan jenis transaksi baru secara lebih fleksibel dan mengurangi kebutuhan modifikasi pada kode yang telah ada.
+Dengan demikian, penerapan OCP membuat program lebih mudah dikembangkan ketika terdapat jenis transaksi baru.
 
 ## 7. Hasil Eksekusi Program
 
-Program dijalankan melalui file `main.py`, yang menghubungkan objek pengguna, dompet, transaksi, serta laporan keuangan.
+Program dijalankan melalui file `main.py` yang menghubungkan objek `User`, `Dompet`, `Transaksi`, dan class laporan.
 
-Output utama menampilkan profil pengguna dan saldo, informasi pemasukan serta pengeluaran, dan laporan keuangan dalam bentuk tabel.
+Hasil eksekusi menampilkan informasi pengguna, saldo dompet, riwayat transaksi, detail pengeluaran, serta laporan keuangan dalam bentuk tabel.
 
-**Screenshot output program:**
+### 7.1 Profil dan Saldo
 
-### a. Profil dan Saldo
+Bagian ini menampilkan informasi pengguna dan saldo dompet dalam satu tabel.
 
 ![Profil dan Saldo](assets/profildansaldo.png)
 
-### b. Riwayat Transaksi
+### 7.2 Riwayat Transaksi
+
+Bagian ini menampilkan data pemasukan dan pengeluaran dalam satu tabel. Pemanggilan `perubahan_saldo()` pada objek yang berbeda merupakan salah satu bukti penerapan polimorfisme melalui inheritance.
 
 ![Riwayat Transaksi](assets/riwayat_transaksi.png)
 
-### c. Detail Pengeluaran
+### 7.3 Detail Pengeluaran
+
+Bagian ini menampilkan informasi pengeluaran melalui method `User.lihat_transaksi()` yang menerima objek `Transaksi`, kemudian memanggil method `tampilkan()` milik objek tersebut.
 
 ![Detail Pengeluaran](assets/asosiasi.png)
 
-### d. Laporan Keuangan (Duck Typing)
+### 7.4 Laporan Keuangan (Duck Typing)
+
+Bagian ini menampilkan laporan saldo dan riwayat transaksi menggunakan method `cetak()` dari dua class yang tidak memiliki hubungan inheritance.
 
 ![Laporan Keuangan](assets/duck_typing.png)
 
-### Bukti Pengujian Abstraksi
+### 7.5 Bukti Pengujian Abstraksi
 
-Hasil `TypeError` membuktikan bahwa class `Transaksi` tidak dapat diinstansiasi secara langsung.
+Hasil `TypeError` menunjukkan bahwa abstract class `Transaksi` tidak dapat diinstansiasi secara langsung.
 
-Output Bukti Abstraksi: 
+![Bukti Abstraksi](assets/bukti_abstraksi.png)
 
 ## 8. Cara Menjalankan Program
 
-Pastikan Python dan library `tabulate` sudah terpasang.
+Pastikan Python telah terpasang pada perangkat.
 
-Instal library yang dibutuhkan:
+**1. Instal library yang dibutuhkan**
 
 `pip install tabulate`
 
-Jalankan program utama:
+**2. Jalankan program utama**
 
 `python main.py`
 
+**3. Jalankan pengujian abstraksi**
+
+`python bukti_abstraksi.py`
 
 ## 9. Kesimpulan
 
-Program Sistem Manajemen Keuangan telah mengintegrasikan konsep abstraksi dan polimorfisme untuk memisahkan tanggung jawab antarkelas dan mengurangi ketergantungan terhadap pemeriksaan jenis objek.
+Program Sistem Manajemen Keuangan telah menerapkan konsep abstraksi dan polimorfisme untuk memisahkan tanggung jawab antarkelas dan memungkinkan objek dengan perilaku berbeda digunakan melalui antarmuka method yang sama.
 
-Abstraksi diterapkan pada class `Transaksi`, polimorfisme melalui overriding diterapkan pada `Pemasukan` dan `Pengeluaran`, duck typing diterapkan pada class laporan, serta operator overloading diterapkan melalui `Dompet.__str__()`.
+Abstraksi diterapkan pada class `Transaksi`, polimorfisme melalui overriding diterapkan pada `Pemasukan` dan `Pengeluaran`, sedangkan duck typing diterapkan pada class `LaporanSaldo` dan `LaporanRiwayat`.
 
-Hubungan antarkelas juga dimodelkan menggunakan asosiasi, agregasi, dan komposisi. Selain itu, prinsip Open/Closed Principle diterapkan untuk mendukung pengembangan jenis transaksi baru tanpa mengubah logika utama pencatatan dompet.
+Program juga menerapkan relasi asosiasi, agregasi, komposisi, inheritance, enkapsulasi, operator overloading, serta prinsip SOLID Open/Closed Principle untuk mendukung pengembangan program tanpa harus mengubah logika utama yang sudah ada.
