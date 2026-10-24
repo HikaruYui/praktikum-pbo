@@ -107,7 +107,7 @@ Python akan menolak instansiasi tersebut karena `Transaksi` masih memiliki abstr
 
 **Screenshot Bukti Abstraksi:**
 
-![Bukti Abstract Class](assets/butki_abstraksi.png)
+![Bukti Abstract Class](assets/bukti_abstraksi.png)
 
 ## 4. Penerapan Polimorfisme
 
@@ -207,39 +207,25 @@ Dengan demikian, penerapan OCP membuat program lebih mudah dikembangkan ketika t
 
 ## 7. Hasil Eksekusi Program
 
-Program dijalankan melalui file `main.py` yang menghubungkan objek `User`, `Dompet`, `Transaksi`, dan class laporan.
-
-Hasil eksekusi menampilkan informasi pengguna, saldo dompet, riwayat transaksi, detail pengeluaran, serta laporan keuangan dalam bentuk tabel.
-
 ### 7.1 Profil dan Saldo
 
-Bagian ini menampilkan informasi pengguna dan saldo dompet dalam satu tabel.
-
-![Profil dan Saldo](assets/profildansaldo)
+![Profil dan Saldo](assets/profildansaldo.png)
 
 ### 7.2 Riwayat Transaksi
 
-Bagian ini menampilkan data pemasukan dan pengeluaran dalam satu tabel. Pemanggilan `perubahan_saldo()` pada objek yang berbeda merupakan salah satu bukti penerapan polimorfisme melalui inheritance.
-
-![Riwayat Transaksi](assets/riwayat_transaksi)
+![Riwayat Transaksi](assets/riwayat_transaksi.png)
 
 ### 7.3 Detail Pengeluaran
 
-Bagian ini menampilkan informasi pengeluaran melalui method `User.lihat_transaksi()` yang menerima objek `Transaksi`, kemudian memanggil method `tampilkan()` milik objek tersebut.
-
-![Detail Pengeluaran](assets/asosiasi)
+![Detail Pengeluaran](assets/asosiasi.png)
 
 ### 7.4 Laporan Keuangan (Duck Typing)
 
-Bagian ini menampilkan laporan saldo dan riwayat transaksi menggunakan method `cetak()` dari dua class yang tidak memiliki hubungan inheritance.
-
-![Laporan Keuangan](assets/duck_typing)
+![Laporan Keuangan](assets/duck_typing.png)
 
 ### 7.5 Bukti Pengujian Abstraksi
 
-Hasil `TypeError` menunjukkan bahwa abstract class `Transaksi` tidak dapat diinstansiasi secara langsung.
-
-![Bukti Abstraksi](assets/bukti_abstraksi)
+![Bukti Abstraksi](assets/bukti_abstraksi.png)
 
 ## 8. Cara Menjalankan Program
 
