@@ -24,7 +24,7 @@ Class Diagram digunakan untuk menggambarkan struktur kelas dan hubungan antarkel
 
 **Diagram UML:**
 
-![Class Diagram Sistem Manajemen Keuangan](assets/lastPbo)
+![Class Diagram Sistem Manajemen Keuangan](assets/lastPbo.png)
 
 ### 2.1 Asosiasi (Association)
 
@@ -204,7 +204,21 @@ Output utama menampilkan profil pengguna dan saldo, informasi pemasukan serta pe
 
 **Screenshot output program:**
 
-![Output Program](assets/output_program)
+### a. Profil dan Saldo
+
+![Profil dan Saldo](assets/profildansaldo.png)
+
+### b. Riwayat Transaksi
+
+![Riwayat Transaksi](assets/riwayat_transaksi.png)
+
+### c. Detail Pengeluaran
+
+![Detail Pengeluaran](assets/asosiasi.png)
+
+### d. Laporan Keuangan (Duck Typing)
+
+![Laporan Keuangan](assets/duck_typing.png)
 
 ### Bukti Pengujian Abstraksi
 
