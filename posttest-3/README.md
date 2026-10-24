@@ -215,31 +215,31 @@ Hasil eksekusi menampilkan informasi pengguna, saldo dompet, riwayat transaksi, 
 
 Bagian ini menampilkan informasi pengguna dan saldo dompet dalam satu tabel.
 
-![Profil dan Saldo](assets/profildansaldo.png)
+![Profil dan Saldo](assets/profildansaldo)
 
 ### 7.2 Riwayat Transaksi
 
 Bagian ini menampilkan data pemasukan dan pengeluaran dalam satu tabel. Pemanggilan `perubahan_saldo()` pada objek yang berbeda merupakan salah satu bukti penerapan polimorfisme melalui inheritance.
 
-![Riwayat Transaksi](assets/riwayat_transaksi.png)
+![Riwayat Transaksi](assets/riwayat_transaksi)
 
 ### 7.3 Detail Pengeluaran
 
 Bagian ini menampilkan informasi pengeluaran melalui method `User.lihat_transaksi()` yang menerima objek `Transaksi`, kemudian memanggil method `tampilkan()` milik objek tersebut.
 
-![Detail Pengeluaran](assets/asosiasi.png)
+![Detail Pengeluaran](assets/asosiasi)
 
 ### 7.4 Laporan Keuangan (Duck Typing)
 
 Bagian ini menampilkan laporan saldo dan riwayat transaksi menggunakan method `cetak()` dari dua class yang tidak memiliki hubungan inheritance.
 
-![Laporan Keuangan](assets/duck_typing.png)
+![Laporan Keuangan](assets/duck_typing)
 
 ### 7.5 Bukti Pengujian Abstraksi
 
 Hasil `TypeError` menunjukkan bahwa abstract class `Transaksi` tidak dapat diinstansiasi secara langsung.
 
-![Bukti Abstraksi](assets/bukti_abstraksi.png)
+![Bukti Abstraksi](assets/bukti_abstraksi)
 
 ## 8. Cara Menjalankan Program
 
