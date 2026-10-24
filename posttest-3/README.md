@@ -107,7 +107,7 @@ Python akan menolak instansiasi tersebut karena `Transaksi` masih memiliki abstr
 
 **Screenshot Bukti Abstraksi:**
 
-![Bukti Abstract Class](assets/bukti_abstraksi.png)
+![Bukti Abstract Class](assets/butki_abstraksi.png)
 
 ## 4. Penerapan Polimorfisme
 
