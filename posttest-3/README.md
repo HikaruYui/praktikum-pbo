@@ -99,15 +99,25 @@ Method `ringkasan()` dapat digunakan bersama oleh `Pemasukan` dan `Pengeluaran` 
 
 Di dalam method tersebut terdapat pemanggilan `self.perubahan_saldo()`, sehingga hasil ringkasan menyesuaikan perilaku subclass masing-masing.
 
-### 3.4 Bukti Abstract Class Tidak Dapat Diinstansiasi
+### 3.4 Bukti Penerapan Abstraksi
 
-Pengujian abstraksi dilakukan dengan mencoba membuat objek secara langsung dari class `Transaksi` menggunakan `try-except TypeError`.
+Pengujian abstraksi dilakukan melalui file `bukti_abstraksi.py` dengan dua pengujian.
 
-Python akan menolak instansiasi tersebut karena `Transaksi` masih memiliki abstract method.
+**1. Pengujian Abstract Class**
 
-**Screenshot Bukti Abstraksi:**
+Program mencoba membuat objek langsung dari class `Transaksi`. Pengujian menghasilkan `TypeError` karena class `Transaksi` merupakan abstract class yang memiliki dua abstract method, yaitu `perubahan_saldo()` dan `tampilkan()`.
 
-![Bukti Abstract Class](assets/bukti_abstraksi.png)
+**2. Pengujian Method Konkret**
+
+Pengujian dilakukan dengan memanggil method `ringkasan()` melalui objek `Pemasukan` dan `Pengeluaran` dalam satu perulangan.
+
+Kedua subclass menggunakan method konkret yang sama dari class induk `Transaksi`, tetapi menghasilkan ringkasan berbeda karena implementasi `perubahan_saldo()` pada masing-masing subclass.
+
+Hasil tersebut membuktikan bahwa method konkret dapat diwariskan dan digunakan bersama oleh subclass.
+
+**Screenshot Hasil Pengujian:**
+
+![Bukti Penerapan Abstraksi](assets/bukti_abstraksi.png)
 
 ## 4. Penerapan Polimorfisme
 
